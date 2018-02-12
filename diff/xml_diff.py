@@ -1,22 +1,18 @@
 import xml.etree.ElementTree as ET
-from re import match, compile
 from logging import Logger
-
-_tag_regexp = compile("(\{.*\})(.*)")
-
-
-def get_name_from_tag(tag):
-    return _tag_regexp.match(tag).group(2)
 
 
 class XmlComparator(object):
-    def __init__(self, file1, file2, logger=None):
+    def __init__(self, file1, file2, comparator, logger=None):
         self._file1 = file1
         self._file2 = file2
         self._parsed_file1 = None
         self._parsed_file2 = None
         self._were_files_parsed = False
         self._logger = logger
+        if not comparator:
+            raise Exception('Comparator has to be set')
+        self._comparator = comparator
 
     def _print_debug_information(self, message):
         if not self._logger:
@@ -47,17 +43,10 @@ class XmlComparator(object):
         self._were_files_parsed = self._parsed_file1 is not None and self._parsed_file2 is not None
 
     def _sort_elements(self, sub_elements):
-        return sorted(sub_elements, key=lambda e: get_name_from_tag(e.tag))
+        return sorted(sub_elements, key=lambda e: e.text if e.text else '')
 
     def _compare_two_elements(self, left_element, right_element):
-        _left_name = left_element.text
-        _right_name = right_element.text
-        _result = _left_name == _right_name
-
-        if not _result:
-            self._print_debug_information(
-                '"%s" <> "%s" => %s' % (_left_name, _right_name, _result))
-        return _result
+        return self._comparator.compare(left_element, right_element)
 
     def _compare_elements_if_depth_reached(self, element_left, element_right):
         if element_left is not None or element_right is not None:
