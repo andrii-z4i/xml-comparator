@@ -7,6 +7,5 @@ class TypeComparator(Comparator):
         return parse_type_from_tag(tag)
 
     def _compare(self, left, right):
-        if self.logger:
-            self.logger.debug("Compare %s and %s" % (left.tag, right.tag))
+        self._print_debug_information("Compare %s and %s" % (left.tag, right.tag))
         return self._get_type_from_tag(left.tag) == self._get_type_from_tag(right.tag)
