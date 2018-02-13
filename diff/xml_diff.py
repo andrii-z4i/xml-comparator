@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from logging import Logger
+from .utils import parse_type_from_tag
 
 
 class XmlComparator(object):
@@ -23,37 +24,10 @@ class XmlComparator(object):
     def is_parsed(self):
         return self._were_files_parsed
 
-    @property
-    def xml_tree_file1(self):
-        if not self._were_files_parsed:
-            raise Exception('Files have to be parsed first')
-
-        return self._parsed_file1
-
-    @property
-    def xml_tree_file2(self):
-        if not self._were_files_parsed:
-            raise Exception('Files have to be parsed first')
-
-        return self._parsed_file2
-
     def parse(self):
         self._parsed_file1 = ET.parse(self._file1).getroot()
         self._parsed_file2 = ET.parse(self._file2).getroot()
         self._were_files_parsed = self._parsed_file1 is not None and self._parsed_file2 is not None
-
-    def _sort_elements(self, sub_elements):
-        return sorted(sub_elements, key=lambda e: e.text if e.text else '')
-
-    def _compare_two_elements(self, left_element, right_element):
-        return self._comparator.compare(left_element, right_element)
-
-    def _compare_elements_if_depth_reached(self, element_left, element_right):
-        if element_left is not None or element_right is not None:
-            return False
-        if element_right is None and element_left is None:
-            return True
-        return self._compare_two_elements(element_left, element_right)
 
     def _compare(self, element_left, element_right, index, depth=None):
         if depth == index:
@@ -77,6 +51,19 @@ class XmlComparator(object):
             _results.append(self._compare(l, r, _index, depth))
 
         return self._single_result(_results)
+
+    def _compare_elements_if_depth_reached(self, element_left, element_right):
+        if element_left is not None or element_right is not None:
+            return False
+        if element_right is None and element_left is None:
+            return True
+        return self._compare_two_elements(element_left, element_right)
+
+    def _compare_two_elements(self, left_element, right_element):
+        return self._comparator.compare(left_element, right_element)
+
+    def _sort_elements(self, sub_elements):
+        return sorted(sub_elements, key=lambda e: parse_type_from_tag(e.tag, self._logger) if e.tag else '')
 
     def _single_result(self, results):
         _false_index = None

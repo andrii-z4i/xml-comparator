@@ -1,12 +1,10 @@
 from .comparator import Comparator
-from re import match, compile
-
-_tag_regexp = compile("(\{.*\})(.*)")
+from ..utils import parse_type_from_tag
 
 
 class TypeComparator(Comparator):
     def _get_type_from_tag(self, tag):
-        return _tag_regexp.match(tag).group(2)
+        return parse_type_from_tag(tag)
 
     def _compare(self, left, right):
         if self.logger:

@@ -16,7 +16,8 @@ class TestXmlDiff(TestCase):
         _type_comparator.set_next_comparator(_text_comparator)
         c = XmlComparator('C:\\Users\\z4i\\projects\\investigations\\content.xml',
                           'C:\\Users\\z4i\\projects\\investigations\\content2.xml',
-                          _type_comparator)
+                          _type_comparator,
+                          logging.getLogger('comparator'))
         c.parse()
         self.assertTrue(c.is_parsed)
         self.assertFalse(c.compare(depth=9))
