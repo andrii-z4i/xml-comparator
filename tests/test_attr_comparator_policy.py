@@ -12,9 +12,9 @@ class TestAttrComparatorPolicy(TestCase):
         _policy = AttrComparatorPolicy()
 
         with patch.object(_policy, '_print_debug_information') as _print_debug:
-            _policy.add_attribute_name('something')
-            _policy.add_attribute_name('something2')
-            _policy.add_attribute_name('something')
+            _policy.add_attribute_name_to_compare('something')
+            _policy.add_attribute_name_to_compare('something2')
+            _policy.add_attribute_name_to_compare('something')
 
         self.assertListEqual(['something', 'something2'], _policy._attr_names)
         self.assertEqual(4, _print_debug.call_count)
@@ -32,9 +32,9 @@ class TestAttrComparatorPolicy(TestCase):
         _policy = AttrComparatorPolicy()
 
         with patch.object(_policy, '_print_debug_information') as _print_debug:
-            _policy.add_attribute_name('something')
-            _policy.add_attribute_name('something2')
-            _policy.add_attribute_name('something')
+            _policy.add_attribute_name_to_compare('something')
+            _policy.add_attribute_name_to_compare('something2')
+            _policy.add_attribute_name_to_compare('something')
             self.assertTrue(_policy.should_compare('something'))
             self.assertFalse(_policy.should_compare('a'))
 
@@ -46,8 +46,8 @@ class TestAttrComparatorPolicy(TestCase):
                 call("Adding 'something2' attribute"),
                 call("Adding 'something' attribute"),
                 call("Skipping add 'something' attribute since it exists"),
-                call("Check for necessity to compare 'something' attribute"),
-                call("Check for necessity to compare 'a' attribute")
+                call("There is necessity to compare 'something' attribute"),
+                call("There is no necessity to compare 'a' attribute")
             ],
             _print_debug.call_args_list
         )

@@ -47,10 +47,10 @@ class AttrComparator(Comparator):
         return _result
 
     def _compare(self, left, right):
-        self._print_debug_information("Compare %s and %s" % (left.attr, right.attr))
+        self._print_debug_information("Compare %s and %s" % (left.attrib, right.attrib))
 
-        _left_attr_keys = sorted(left.attr.keys())
-        _right_attr_keys = sorted(right.attr.keys())
+        _left_attr_keys = sorted(left.attrib.keys())
+        _right_attr_keys = sorted(right.attrib.keys())
 
         _left_attr_keys = self._process_keys(_left_attr_keys)
         _right_attr_keys = self._process_keys(_right_attr_keys)
@@ -61,4 +61,4 @@ class AttrComparator(Comparator):
         if not self._check_keys(_left_attr_keys, _right_attr_keys):
             return False
 
-        return self._check_key_values(_left_attr_keys, left.attr, right.attr)
+        return self._check_key_values(_left_attr_keys, left.attrib, right.attrib)

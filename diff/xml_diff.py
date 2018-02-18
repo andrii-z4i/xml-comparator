@@ -4,30 +4,22 @@ from .utils import parse_type_from_tag
 
 
 class XmlComparator(object):
-    def __init__(self, file1, file2, comparator, logger=None):
-        self._file1 = file1
-        self._file2 = file2
-        self._parsed_file1 = None
-        self._parsed_file2 = None
-        self._were_files_parsed = False
+    def __init__(self, root_left, root_right, logger=None):
+        self._root_left = root_left
+        self._root_right = root_right
         self._logger = logger
+        self._comparator = None
+        self._comparison_results = []
+
+    def set_comparator(self, comparator):
         if not comparator:
-            raise Exception('Comparator has to be set')
+            raise Exception("Comparator can't be None")
         self._comparator = comparator
 
     def _print_debug_information(self, message):
         if not self._logger:
             return
         self._logger.debug(message)
-
-    @property
-    def is_parsed(self):
-        return self._were_files_parsed
-
-    def parse(self):
-        self._parsed_file1 = ET.parse(self._file1).getroot()
-        self._parsed_file2 = ET.parse(self._file2).getroot()
-        self._were_files_parsed = self._parsed_file1 is not None and self._parsed_file2 is not None
 
     def _compare(self, element_left, element_right, index, depth=None):
         if depth == index:
@@ -50,6 +42,8 @@ class XmlComparator(object):
         for (l, r) in zip(_left_sub_elements, _right_sub_elements):
             _results.append(self._compare(l, r, _index, depth))
 
+        _results.append(self._compare_two_elements(element_left, element_right))
+
         return self._single_result(_results)
 
     def _compare_elements_if_depth_reached(self, element_left, element_right):
@@ -60,6 +54,10 @@ class XmlComparator(object):
         return self._compare_two_elements(element_left, element_right)
 
     def _compare_two_elements(self, left_element, right_element):
+        if not self._comparator:
+            self._print_debug_information('Skip comparing since no comparator has been set')
+            return True
+
         return self._comparator.compare(left_element, right_element)
 
     def _sort_elements(self, sub_elements):
@@ -81,5 +79,25 @@ class XmlComparator(object):
         """Compare two files up to depth level"""
         index = 0
         _result = self._compare(
-            self._parsed_file1, self._parsed_file2, index, depth)
+            self._root_left, self._root_right, index, depth)
         return _result
+
+
+def create_xml_diff_from_files(file1, file2, logger=None):
+    if not file1 or not file2:
+        raise Exception('Epected files path as parameters')
+
+    with open(file1, 'r') as _f1:
+        _lines = _f1.readlines()
+        _root1 = ET.fromstringlist(_lines)
+
+    with open(file2, 'r') as _f2:
+        _lines = _f2.readlines()
+        _root2 = ET.fromstringlist(_lines)
+
+    return XmlComparator(_root1, _root2, logger)
+
+def create_xml_diff_from_strings(string1, string2, logger=None):
+    _root1 = ET.fromstring(string1)
+    _root2 = ET.fromstring(string2)
+    return XmlComparator(_root1, _root2, logger)
