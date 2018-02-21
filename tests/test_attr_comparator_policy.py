@@ -1,7 +1,8 @@
 from unittest import TestCase
-from diff.comparators.attr_comparator_policy import AttrComparatorPolicy
+from xmlcomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
 from unittest.mock import Mock, patch, call
 from tests import logging_configuration as lc
+
 
 class TestAttrComparatorPolicy(TestCase):
     def test_instatiate_policy_no_throw(self):
@@ -51,7 +52,3 @@ class TestAttrComparatorPolicy(TestCase):
             ],
             _print_debug.call_args_list
         )
-
-
-
-

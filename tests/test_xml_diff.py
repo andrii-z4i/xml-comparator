@@ -1,9 +1,9 @@
 from unittest import TestCase
-from diff.xml_diff import create_xml_diff_from_strings
-from diff.comparators.type_comparator import TypeComparator
-from diff.comparators.text_comparator import TextComparator
-from diff.comparators.attr_comparator_policy import AttrComparatorPolicy
-from diff.comparators.attr_comparator import AttrComparator
+from xmlcomparator.xml_diff import create_xml_diff_from_strings
+from xmlcomparator.comparators.type_comparator import TypeComparator
+from xmlcomparator.comparators.text_comparator import TextComparator
+from xmlcomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
+from xmlcomparator.comparators.attr_comparator import AttrComparator
 from tests import logging_configuration as lc
 
 
@@ -54,7 +54,8 @@ class TestXmlDiff(TestCase):
         _type_comparator = TypeComparator(lc.get_logger('type'))
         _text_comparator = TextComparator(lc.get_logger('text'))
         _attr_comparator = AttrComparator(lc.get_logger('attr_comparator'))
-        _attr_policy = AttrComparatorPolicy(lc.get_logger('attr_comparator_policy'))
+        _attr_policy = AttrComparatorPolicy(
+            lc.get_logger('attr_comparator_policy'))
         _attr_policy.add_attribute_name_to_compare('marker-id')
         _attr_policy.add_attribute_name_to_compare('type')
         _attr_comparator.set_attr_comparator_policy(_attr_policy)
