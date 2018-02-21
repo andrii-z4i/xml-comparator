@@ -1,9 +1,9 @@
 from unittest import TestCase
-from xmlcomparator.xml_diff import create_xml_diff_from_strings
-from xmlcomparator.comparators.type_comparator import TypeComparator
-from xmlcomparator.comparators.text_comparator import TextComparator
-from xmlcomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
-from xmlcomparator.comparators.attr_comparator import AttrComparator
+from xmlscomparator.xml_diff import create_xml_diff_from_strings
+from xmlscomparator.comparators.type_comparator import TypeComparator
+from xmlscomparator.comparators.text_comparator import TextComparator
+from xmlscomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
+from xmlscomparator.comparators.attr_comparator import AttrComparator
 from tests import logging_configuration as lc
 
 

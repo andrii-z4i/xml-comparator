@@ -1,7 +1,8 @@
 from distutils.core import setup
 setup(
-    name='xmlcomparator',
-    packages=['xmlcomparator'],  # this must be the same as the name above
+    name='xmlscomparator',
+    # this must be the same as the name above
+    packages=['xmlscomparator', 'xmlscomparator.comparators'],
     # https://packaging.python.org/tutorials/distributing-packages/#pre-release-versioning
     version='0.1a1',
     description='A flexible xml comparator',
@@ -9,7 +10,7 @@ setup(
     author_email='z4i.andrey@gmail.com',
     # use the URL to the github repo
     url='https://github.com/andrii-z4i/xml-comparator',
-    download_url='https://github.com/andrii-z4i/xml-comparator/archive/0.1.tar.gz',
+    download_url='https://github.com/andrii-z4i/xml-comparator/archive/0.3.tar.gz',
     license='gpl-3.0',
     keywords=['xml', 'diff', 'flexible'],  # arbitrary keywords
     classifiers=[
@@ -21,10 +22,10 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Xml Diff',
+        'Topic :: Software Development :: Libraries :: Python Modules',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: GNU General Public License v3.0 License',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.

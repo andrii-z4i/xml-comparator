@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xmlcomparator.comparators.type_comparator import TypeComparator
+from xmlscomparator.comparators.type_comparator import TypeComparator
 from unittest.mock import Mock
 
 

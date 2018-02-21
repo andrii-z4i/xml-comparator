@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xmlcomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
+from xmlscomparator.comparators.attr_comparator_policy import AttrComparatorPolicy
 from unittest.mock import Mock, patch, call
 from tests import logging_configuration as lc
 

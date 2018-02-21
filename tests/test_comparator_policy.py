@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xmlcomparator.comparators.comparator_policy import ComparatorPolicy
+from xmlscomparator.comparators.comparator_policy import ComparatorPolicy
 
 
 class TestComparatorPolicy(TestCase):
