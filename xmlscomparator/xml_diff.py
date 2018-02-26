@@ -4,12 +4,13 @@ from .utils import parse_type_from_tag
 
 
 class XmlComparator(object):
-    def __init__(self, root_left, root_right, logger=None):
+    def __init__(self, root_left, root_right, logger=None, types_to_skip=None):
         self._root_left = root_left
         self._root_right = root_right
         self._logger = logger
         self._comparator = None
         self._comparison_results = []
+        self._types_to_skip = types_to_skip
 
     def set_comparator(self, comparator):
         if not comparator:
@@ -27,6 +28,18 @@ class XmlComparator(object):
 
         _left_sub_elements = self._sort_elements([e for e in element_left])
         _right_sub_elements = self._sort_elements([e for e in element_right])
+
+        _left_sub_elements = [element for element in filter(
+            lambda e:
+            not self._check_if_type_has_to_be_skipped(parse_type_from_tag(e.tag, self._logger)) if e.tag else True,
+            _left_sub_elements
+        )]
+
+        _right_sub_elements = [element for element in filter(
+            lambda e:
+            not self._check_if_type_has_to_be_skipped(parse_type_from_tag(e.tag, self._logger)) if e.tag else True,
+            _right_sub_elements
+        )]
 
         _left_length = len(_left_sub_elements)
         _right_length = len(_right_sub_elements)
@@ -63,6 +76,11 @@ class XmlComparator(object):
     def _sort_elements(self, sub_elements):
         return sorted(sub_elements, key=lambda e: parse_type_from_tag(e.tag, self._logger) if e.tag else '')
 
+    def _check_if_type_has_to_be_skipped(self, type):
+        if not self._types_to_skip:
+            return False
+        return type in self._types_to_skip
+
     def _single_result(self, results):
         _false_index = None
         try:
@@ -85,7 +103,7 @@ class XmlComparator(object):
 
 def create_xml_diff_from_files(file1, file2, logger=None):
     if not file1 or not file2:
-        raise Exception('Epected files path as parameters')
+        raise Exception('Expected files path as parameters')
 
     with open(file1, 'r') as _f1:
         _lines = _f1.readlines()
