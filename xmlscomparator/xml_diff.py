@@ -4,13 +4,19 @@ from .utils import parse_type_from_tag
 
 
 class XmlComparator(object):
-    def __init__(self, root_left, root_right, logger=None, types_to_skip=None):
+    def __init__(self, root_left, root_right, logger=None):
         self._root_left = root_left
         self._root_right = root_right
         self._logger = logger
         self._comparator = None
         self._comparison_results = []
-        self._types_to_skip = types_to_skip
+        self._types_to_skip = None
+
+    def add_types_to_skip(self, type_name):
+        if not self._types_to_skip:
+            self._types_to_skip = []
+
+        self._types_to_skip.append(type_name)
 
     def set_comparator(self, comparator):
         if not comparator:
@@ -45,6 +51,7 @@ class XmlComparator(object):
         _right_length = len(_right_sub_elements)
 
         if _left_length != _right_length:
+            self._print_debug_information("Length is not equal (%d != %d)" % (_left_length, _right_length))
             return False
 
         if not _left_length:
@@ -53,16 +60,21 @@ class XmlComparator(object):
         _index = index + 1
         _results = []
         for (l, r) in zip(_left_sub_elements, _right_sub_elements):
-            _results.append(self._compare(l, r, _index, depth))
+            self._print_debug_information("Going to compare {%s and %s}" % (l, r))
+            _compare_result = self._compare(l, r, _index, depth)
+            self._print_debug_information("Result is %s" % _compare_result)
+            _results.append(_compare_result)
 
         _results.append(self._compare_two_elements(element_left, element_right))
 
         return self._single_result(_results)
 
     def _compare_elements_if_depth_reached(self, element_left, element_right):
-        if element_left is not None or element_right is not None:
+        if element_left is None or element_right is None:
+            self._print_debug_information("One of elements is None, returns False")
             return False
         if element_right is None and element_left is None:
+            self._print_debug_information("Both elements are None, returns False")
             return True
         return self._compare_two_elements(element_left, element_right)
 
@@ -91,6 +103,7 @@ class XmlComparator(object):
         if _false_index != -1:
             self._print_debug_information(results)
             _result = False
+        self._print_debug_information("Single result is %s" % _result)
         return _result
 
     def compare(self, depth=None):
