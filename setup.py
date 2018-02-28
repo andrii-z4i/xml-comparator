@@ -4,13 +4,13 @@ setup(
     # this must be the same as the name above
     packages=['xmlscomparator', 'xmlscomparator.comparators'],
     # https://packaging.python.org/tutorials/distributing-packages/#pre-release-versioning
-    version='0.1a1',
+    version='0.1a2',
     description='A flexible xml comparator',
     author='Andrii Kozin',
     author_email='z4i.andrey@gmail.com',
     # use the URL to the github repo
     url='https://github.com/andrii-z4i/xml-comparator',
-    download_url='https://github.com/andrii-z4i/xml-comparator/archive/0.3.tar.gz',
+    download_url='https://github.com/andrii-z4i/xml-comparator/archive/0.4.tar.gz',
     license='gpl-3.0',
     keywords=['xml', 'diff', 'flexible'],  # arbitrary keywords
     classifiers=[

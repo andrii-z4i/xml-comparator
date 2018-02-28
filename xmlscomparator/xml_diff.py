@@ -10,6 +10,13 @@ class XmlComparator(object):
         self._logger = logger
         self._comparator = None
         self._comparison_results = []
+        self._types_to_skip = None
+
+    def add_types_to_skip(self, type_name):
+        if not self._types_to_skip:
+            self._types_to_skip = []
+
+        self._types_to_skip.append(type_name)
 
     def set_comparator(self, comparator):
         if not comparator:
@@ -28,10 +35,23 @@ class XmlComparator(object):
         _left_sub_elements = self._sort_elements([e for e in element_left])
         _right_sub_elements = self._sort_elements([e for e in element_right])
 
+        _left_sub_elements = [element for element in filter(
+            lambda e:
+            not self._check_if_type_has_to_be_skipped(parse_type_from_tag(e.tag, self._logger)) if e.tag else True,
+            _left_sub_elements
+        )]
+
+        _right_sub_elements = [element for element in filter(
+            lambda e:
+            not self._check_if_type_has_to_be_skipped(parse_type_from_tag(e.tag, self._logger)) if e.tag else True,
+            _right_sub_elements
+        )]
+
         _left_length = len(_left_sub_elements)
         _right_length = len(_right_sub_elements)
 
         if _left_length != _right_length:
+            self._print_debug_information("Length is not equal (%d != %d)" % (_left_length, _right_length))
             return False
 
         if not _left_length:
@@ -40,16 +60,21 @@ class XmlComparator(object):
         _index = index + 1
         _results = []
         for (l, r) in zip(_left_sub_elements, _right_sub_elements):
-            _results.append(self._compare(l, r, _index, depth))
+            self._print_debug_information("Going to compare {%s and %s}" % (l, r))
+            _compare_result = self._compare(l, r, _index, depth)
+            self._print_debug_information("Result is %s" % _compare_result)
+            _results.append(_compare_result)
 
         _results.append(self._compare_two_elements(element_left, element_right))
 
         return self._single_result(_results)
 
     def _compare_elements_if_depth_reached(self, element_left, element_right):
-        if element_left is not None or element_right is not None:
+        if element_left is None or element_right is None:
+            self._print_debug_information("One of elements is None, returns False")
             return False
         if element_right is None and element_left is None:
+            self._print_debug_information("Both elements are None, returns False")
             return True
         return self._compare_two_elements(element_left, element_right)
 
@@ -63,6 +88,11 @@ class XmlComparator(object):
     def _sort_elements(self, sub_elements):
         return sorted(sub_elements, key=lambda e: parse_type_from_tag(e.tag, self._logger) if e.tag else '')
 
+    def _check_if_type_has_to_be_skipped(self, type):
+        if not self._types_to_skip:
+            return False
+        return type in self._types_to_skip
+
     def _single_result(self, results):
         _false_index = None
         try:
@@ -73,6 +103,7 @@ class XmlComparator(object):
         if _false_index != -1:
             self._print_debug_information(results)
             _result = False
+        self._print_debug_information("Single result is %s" % _result)
         return _result
 
     def compare(self, depth=None):
@@ -85,7 +116,7 @@ class XmlComparator(object):
 
 def create_xml_diff_from_files(file1, file2, logger=None):
     if not file1 or not file2:
-        raise Exception('Epected files path as parameters')
+        raise Exception('Expected files path as parameters')
 
     with open(file1, 'r') as _f1:
         _lines = _f1.readlines()
